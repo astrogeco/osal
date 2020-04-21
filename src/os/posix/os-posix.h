@@ -37,7 +37,7 @@
 #include <fcntl.h>
 #include <semaphore.h>
 #include <sys/types.h>
-#include <sys/signal.h>
+#include <signal.h>
 
 #include "common_types.h"
 #include "osapi.h"
