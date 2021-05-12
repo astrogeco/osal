@@ -14,9 +14,12 @@ jobs:
       - name: Install coverage tools
         run: sudo apt-get install lcov -y
 
-      - name: Checkout submodule
+      - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Display git reference
+        run: git rev-parse --short HEAD
+      
       - name: Set up for build
         run: |
           cp Makefile.sample Makefile
