@@ -1,4 +1,4 @@
-name: "Standalone OSAL Build and Test"
+name: Standalone OSAL Build and Test
 
 on:
   push:
@@ -6,20 +6,23 @@ on:
 
 jobs:
 
-  Prepare-Environment:
-    - name: Checkout OSAL
-      uses: actions/checkout@v2
+  prep-env:
+    name: Prepare Environment
+    runs-on: ubuntu-18.04
+    
+    steps:
+      - name: Checkout OSAL
+        uses: actions/checkout@v2
 
-    - name: Set up for build
-      run: |
-        cp Makefile.sample Makefile
-        make PERMISSIVE_MODE=true prep
+      - name: Set up for build
+        run: |
+          cp Makefile.sample Makefile
+          make PERMISSIVE_MODE=true prep
 
-      steps:
-        - name: cache this stuff
-          run: |
-            pwd
-            ls
+      - name: Cache
+        run: |
+          pwd
+          ls
 
   #
   #     # Grab previous cache for cfs build
