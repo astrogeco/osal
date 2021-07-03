@@ -12,6 +12,7 @@ jobs:
 
     steps:
       - name: Cache Source and proto-build
+        id: cache-src-proto-bld
         uses: actions/cache@v2
         with:
           path: |
@@ -40,6 +41,12 @@ jobs:
             /home/runner/work/osal/build
             /home/runner/work/osal/osal
           key: proto-build
+
+      - name: Check cache
+        if: steps.cache-src-proto-bld.outputs.cache-hit == 'true'
+        run: |
+          pwd
+          ls
 
       - name: Cache built binary
         uses: actions/cache@v2
