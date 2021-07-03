@@ -27,8 +27,6 @@ jobs:
         run: |
           cp Makefile.sample Makefile
           make PERMISSIVE_MODE=true prep O=/home/runner/work/osal/build
-
-
   build-osal:
     runs-on: ubuntu-18.04
     needs: prep-env
@@ -57,7 +55,6 @@ jobs:
 
       - name: Build the code
         run: make -j O=/home/runner/work/osal/build
-
   prep-tests:
     runs-on: ubuntu-18.04
     needs: prep-env
@@ -85,11 +82,9 @@ jobs:
       - name: Prep Tests
         run: |
           make PERMISSIVE_MODE=true ENABLE_UNIT_TESTS=true prep O=/home/runner/work/osal/build
-
-
   build-tests:
     runs-on: ubuntu-18.04
-    needs: prep-tests, build-osal
+    needs: [prep-tests, build-osal]
 
     steps:
       - name: Cache Source and proto-build
