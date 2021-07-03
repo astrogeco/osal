@@ -67,37 +67,9 @@ jobs:
         working-directory: /home/runner/work/osal/
 
 
-  prep-tests:
-    runs-on: ubuntu-18.04
-    needs: prep-env
-
-    steps:
-
-      - name: Cache Source and proto-build
-        id: cache-src-proto-bld
-        uses: actions/cache@v2
-        with:
-          path: |
-            /home/runner/work/osal/Makefile
-            /home/runner/work/osal/build/*
-            /home/runner/work/osal/osal/*
-          key: proto-build-${{ github.run_number }}
-
-      - name: Cache Test Source
-        uses: actions/cache@v2
-        with:
-          path: |
-            /home/runner/work/osal/build/*
-          key: test-build-${{ github.run_number }}
-
-      - name: Prep Tests
-        run: |
-          make PERMISSIVE_MODE=true ENABLE_UNIT_TESTS=true prep O=/home/runner/work/osal/build
-        working-directory: /home/runner/work/osal
-
   build-tests:
     runs-on: ubuntu-18.04
-    needs: [prep-tests, build-osal]
+    needs: [proto-build, build-osal]
 
     steps:
 
@@ -114,24 +86,10 @@ jobs:
             /home/runner/work/osal/osal/*
           key: proto-build-${{ github.run_number }}
 
-      - name: Check files post proto-build
+      - name: Prep Tests
         run: |
-          cd osal
-          ls
-          cd ../build
-          ls
-        working-directory: /home/runner/work/osal/
-
-      - name: Cache Test Source
-        uses: actions/cache@v2
-        with:
-          path: |
-            /home/runner/work/osal/build/*
-          key: test-build-${{ github.run_number }}
-
-      - name: Check files post test-build
-        run: ls
-        working-directory: /home/runner/work/osal/build
+          make PERMISSIVE_MODE=true ENABLE_UNIT_TESTS=true prep
+        working-directory: /home/runner/work/osal
 
       - name: Cache built binary
         uses: actions/cache@v2
@@ -150,8 +108,12 @@ jobs:
         run: ls
         working-directory: /home/runner/work/osal/build
 
+      - name: Build Tests Binary
+        run: make
+        working-directory: /home/runner/work/osal
+
       - name: Run Tests
-        run: make test O=/home/runner/work/osal/build
+        run: make test
         working-directory: /home/runner/work/osal
 
   #
