@@ -90,6 +90,8 @@ jobs:
       - name: Prep Tests
         run: |
           make PERMISSIVE_MODE=true ENABLE_UNIT_TESTS=true prep O=/home/runner/work/osal/build
+        working-directory: /home/runner/work/osal
+
   build-tests:
     runs-on: ubuntu-18.04
     needs: [prep-tests, build-osal]
@@ -129,6 +131,7 @@ jobs:
 
       - name: Run Tests
         run: make test O=/home/runner/work/osal/build
+        working-directory: /home/runner/work/osal
 
   #
   # Run-Unit-Tests:

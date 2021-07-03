@@ -125,7 +125,7 @@ install:
 prep $(O)/.prep:
 	mkdir -p "$(O)"
 	echo "$(CURDIR)"
-	(cd "$(O)" && cmake $(PREP_OPTS) "$(CURDIR)")
+	(cd "$(O)" && cmake $(PREP_OPTS) "$(CURDIR)/osal")
 	echo "$(PREP_OPTS)" > "$(O)/.prep"
 
 clean:
