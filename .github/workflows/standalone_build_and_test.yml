@@ -118,6 +118,14 @@ jobs:
             /home/runner/work/osal/osal/*
           key: proto-build-${{ github.run_number }}
 
+      - name: Check files post proto-build
+        run: |
+          cd osal
+          ls
+          cd ../build
+          ls
+        working-directory: /home/runner/work/osal/
+
       - name: Cache Test Source
         uses: actions/cache@v2
         with:
@@ -128,6 +136,10 @@ jobs:
             /home/runner/work/osal/build/unit-tests
             /home/runner/work/osal/build/ut-stubs
           key: test-build-${{ github.run_number }}
+
+      - name: Check files post test-build
+        run: ls
+        working-directory: /home/runner/work/osal/build
 
       - name: Cache built binary
         uses: actions/cache@v2
@@ -142,10 +154,10 @@ jobs:
             /home/runner/work/osal/build/CMakeFiles/osal.dir/src/os/shared/src/
           key: bin-build-${{ github.run_number }}
 
-      - name: Check files
+      - name: Check files post bin-build
         run: ls
         working-directory: /home/runner/work/osal/build
-        
+
       - name: Run Tests
         run: make test O=/home/runner/work/osal/build
         working-directory: /home/runner/work/osal
