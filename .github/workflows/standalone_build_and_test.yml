@@ -69,7 +69,7 @@ jobs:
 
   build-tests:
     runs-on: ubuntu-18.04
-    needs: [proto-build, build-osal]
+    needs: [prep-env, build-osal]
 
     steps:
 
