@@ -142,7 +142,10 @@ jobs:
             /home/runner/work/osal/build/CMakeFiles/osal.dir/src/os/shared/src/
           key: bin-build-${{ github.run_number }}
 
-
+      - name: Check files
+        run: ls
+        working-directory: /home/runner/work/osal/build
+        
       - name: Run Tests
         run: make test O=/home/runner/work/osal/build
         working-directory: /home/runner/work/osal
