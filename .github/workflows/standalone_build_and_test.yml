@@ -18,8 +18,8 @@ jobs:
       steps:
         - name: cache this stuff
           run: |
-          pwd
-          ls
+            pwd
+            ls
 
   #
   #     # Grab previous cache for cfs build
