@@ -19,7 +19,7 @@ jobs:
             Makefile
             /home/runner/work/osal/build
             /home/runner/work/osal/osal
-          key: proto-build
+          key: proto-build-${{ github.run_number }}
 
       - name: Checkout OSAL
         if: steps.cache.outputs.cache-hit != 'true'
@@ -43,7 +43,7 @@ jobs:
           path: |
             /home/runner/work/osal/build
             /home/runner/work/osal/osal
-          key: proto-build
+          key: proto-build-${{ github.run_number }}
 
       - name: Cache built binary
         uses: actions/cache@v2
@@ -56,7 +56,7 @@ jobs:
             /home/runner/work/osal/build/generic-linux_impl/CMakeFiles/osal_generic-linux_impl.dir/src/
             /home/runner/work/osal/build/CMakeFiles/osal_bsp.dir/src/bsp/shared/src/
             /home/runner/work/osal/build/CMakeFiles/osal.dir/src/os/shared/src/
-          key: bin-build
+          key: bin-build-${{ github.run_number }}
 
       - name: Build the code
         run: make -j O=/home/runner/work/osal/build
@@ -74,7 +74,7 @@ jobs:
           path: |
             /home/runner/work/osal/build
             /home/runner/work/osal/osal
-          key: proto-build
+          key: proto-build-${{ github.run_number }}
 
       - name: Cache Test Source
         uses: actions/cache@v2
@@ -85,7 +85,7 @@ jobs:
             /home/runner/work/osal/build/unit-tests
             /home/runner/work/osal/build/unit-tests
             /home/runner/work/osal/build/ut-stubs
-          key: test-build
+          key: test-build-${{ github.run_number }}
 
       - name: Prep Tests
         run: |
@@ -103,7 +103,7 @@ jobs:
           path: |
             /home/runner/work/osal/build
             /home/runner/work/osal/osal
-          key: proto-build
+          key: proto-build-${{ github.run_number }}
 
       - name: Cache Test Source
         uses: actions/cache@v2
@@ -114,7 +114,7 @@ jobs:
             /home/runner/work/osal/build/unit-tests
             /home/runner/work/osal/build/unit-tests
             /home/runner/work/osal/build/ut-stubs
-          key: test-build
+          key: test-build-${{ github.run_number }}
 
       - name: Cache Test Source
         uses: actions/cache@v2
@@ -127,7 +127,7 @@ jobs:
             /home/runner/work/osal/build/generic-linux_impl/CMakeFiles/osal_generic-linux_impl.dir/src/
             /home/runner/work/osal/build/CMakeFiles/osal_bsp.dir/src/bsp/shared/src/
             /home/runner/work/osal/build/CMakeFiles/osal.dir/src/os/shared/src/
-          key: bin-build
+
 
       - name: Run Tests
         run: make test O=/home/runner/work/osal/build
