@@ -22,7 +22,7 @@ jobs:
           key: proto-build-${{ github.run_number }}
 
       - name: Checkout OSAL
-        if: steps.cache.outputs.cache-hit != 'true'
+        if: steps.cache-src-proto-bld.outputs.cache-hit != 'true'
         uses: actions/checkout@v2
 
       - name: Set up for build
