@@ -27,6 +27,7 @@ jobs:
 
       - name: Copy Makefile
         run: cp osal/Makefile.sample Makefile
+        working-directory: /home/runner/work/osal
 
       - name: Prep Build
         run: |
