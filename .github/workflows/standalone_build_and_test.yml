@@ -43,10 +43,14 @@ jobs:
             /home/runner/work/osal/osal
           key: proto-build
 
-      - name: Check cache
+      - name: Check cache (pwd)
         if: steps.cache-src-proto-bld.outputs.cache-hit == 'true'
         run: |
           pwd
+
+      - name: Check cache (ls)
+        if: steps.cache-src-proto-bld.outputs.cache-hit == 'true'
+        run: |
           ls
 
       - name: Cache built binary
