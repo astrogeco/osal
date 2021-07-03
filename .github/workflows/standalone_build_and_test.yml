@@ -26,7 +26,7 @@ jobs:
 
       - name: Set up for build
         run: |
-          cp Makefile.sample
+          cp Makefile.sample Makefile
           make PERMISSIVE_MODE=true prep O=/home/runner/work/osal/build
   build-osal:
     runs-on: ubuntu-18.04
