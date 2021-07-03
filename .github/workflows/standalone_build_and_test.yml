@@ -87,11 +87,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            /home/runner/work/osal/build/tests
-            /home/runner/work/osal/build/unit-test-coverage
-            /home/runner/work/osal/build/unit-tests
-            /home/runner/work/osal/build/unit-tests
-            /home/runner/work/osal/build/ut-stubs
+            /home/runner/work/osal/build/*
           key: test-build-${{ github.run_number }}
 
       - name: Prep Tests
@@ -130,11 +126,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            /home/runner/work/osal/build/tests
-            /home/runner/work/osal/build/unit-test-coverage
-            /home/runner/work/osal/build/unit-tests
-            /home/runner/work/osal/build/unit-tests
-            /home/runner/work/osal/build/ut-stubs
+            /home/runner/work/osal/build/*
           key: test-build-${{ github.run_number }}
 
       - name: Check files post test-build
