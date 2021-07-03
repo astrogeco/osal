@@ -104,6 +104,10 @@ jobs:
     needs: [prep-tests, build-osal]
 
     steps:
+
+      - name: Install lcov
+        run: sudo apt-get install lcov -y
+
       - name: Cache Source and proto-build
         id: cache-src-proto-bld
         uses: actions/cache@v2
