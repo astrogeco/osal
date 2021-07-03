@@ -16,18 +16,20 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            Makefile
-            /home/runner/work/osal/build
-            /home/runner/work/osal/osal
+            /home/runner/work/osal/Makefile
+            /home/runner/work/osal/build/*
+            /home/runner/work/osal/osal/*
           key: proto-build-${{ github.run_number }}
 
       - name: Checkout OSAL
         if: steps.cache-src-proto-bld.outputs.cache-hit != 'true'
         uses: actions/checkout@v2
 
-      - name: Set up for build
+      - name: Copy Makefile
+        run: cp osal/Makefile.sample Makefile
+
+      - name: Prep Build
         run: |
-          cp osal/Makefile.sample Makefile
           make PERMISSIVE_MODE=true prep O=/home/runner/work/osal/build
         working-directory: /home/runner/work/osal
 
