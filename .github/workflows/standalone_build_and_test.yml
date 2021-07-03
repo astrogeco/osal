@@ -1,0 +1,91 @@
+name: "Standalone OSAL Build and Test"
+
+on:
+  push:
+  pull_request:
+
+jobs:
+
+  Prepare-Environment:
+    - name: Checkout OSAL
+      uses: actions/checkout@v2
+
+    - name: Set up for build
+      run: |
+        cp Makefile.sample Makefile
+        make PERMISSIVE_MODE=true prep
+
+      steps:
+        - name: cache this stuff
+          run: |
+          pwd
+          ls
+
+  #
+  #     # Grab previous cache for cfs build
+  #     - name: Cache Source and proto-build
+  #       id: cache-source-proto-build
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: ~/work/cFS/
+  #         key: ${{ runner.os }}-build-${{ env.BUILDTYPE }}-v${{ env.PREVIOUS_CACHE_VERSION }}
+  #
+  #     - name: Restore Makefile and defs
+  #       if: steps.cache-previous-build.outputs.cache-hit == 'true'
+  #       run: |
+  #         pwd
+  #         cp ~/work/Makefile Makefile
+  #         cp -r ~/work/sample_defs sample_defs
+  #
+  #
+  #
+  #
+  #
+  # Build-osal:
+  #   runs-on: ubuntu-18.04
+  #   timeout-minutes: 15
+  #   needs: "Prepare-Environment"
+  #
+  #
+  #   steps:
+  #     - name: Load Cache
+  #
+  #     - name: Build the code
+  #       run: make -j
+  #
+  #     - name: create osal-binary cache
+  #
+  # Prepare-Unit-Tests:
+  #   runs-on: ubuntu-18.04
+  #   needs: "Prepare-Environment"
+  #
+  #   steps:
+  #     - name: Prepare the test environment
+  #       run: make PERMISSIVE_MODE=true ENABLE_UNIT_TESTS=true prep
+  #
+  # Run-Unit-Tests:
+  #   runs-on: ubuntu-18.04
+  #   timeout-minutes: 15
+  #   needs: "Prepare-Environment"
+  #
+  #   steps:
+  #     - name: Install coverage tools
+  #       run: sudo apt-get install lcov -y
+  #
+  #     - name: Prepare the test environment
+  #       run: make PERMISSIVE_MODE=true ENABLE_UNIT_TESTS=true prep
+  #
+  #     # Baseline lcov and run all tests
+  #     - name: Test
+  #       run: make test
+  #
+  #     - name: Calculate coverage
+  #       run: make lcov | tee lcov_out.txt
+  #
+  #     - name: Confirm 100% line coverage
+  #       run: |
+  #         if [[ `grep -A 3 "Overall coverage rate" lcov_out.txt | grep lines` != *"100.0%"* ]]; then
+  #           grep -A 3 "Overall coverage rate" lcov_out.txt
+  #           echo "Lacks 100.0% line unit test coverage"
+  #           exit -1
+  #         fi
