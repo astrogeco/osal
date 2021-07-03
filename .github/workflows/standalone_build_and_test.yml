@@ -40,6 +40,7 @@ jobs:
 
     steps:
       - name: Cache Source and proto-build
+        id: cache-src-proto-bld
         uses: actions/cache@v2
         with:
           path: |
@@ -71,12 +72,15 @@ jobs:
     needs: prep-env
 
     steps:
+
       - name: Cache Source and proto-build
+        id: cache-src-proto-bld
         uses: actions/cache@v2
         with:
           path: |
-            /home/runner/work/osal/build
-            /home/runner/work/osal/osal
+            /home/runner/work/osal/Makefile
+            /home/runner/work/osal/build/*
+            /home/runner/work/osal/osal/*
           key: proto-build-${{ github.run_number }}
 
       - name: Cache Test Source
@@ -101,11 +105,13 @@ jobs:
 
     steps:
       - name: Cache Source and proto-build
+        id: cache-src-proto-bld
         uses: actions/cache@v2
         with:
           path: |
-            /home/runner/work/osal/build
-            /home/runner/work/osal/osal
+            /home/runner/work/osal/Makefile
+            /home/runner/work/osal/build/*
+            /home/runner/work/osal/osal/*
           key: proto-build-${{ github.run_number }}
 
       - name: Cache Test Source
@@ -119,7 +125,7 @@ jobs:
             /home/runner/work/osal/build/ut-stubs
           key: test-build-${{ github.run_number }}
 
-      - name: Cache Test Source
+      - name: Cache built binary
         uses: actions/cache@v2
         with:
           path: |
@@ -130,6 +136,7 @@ jobs:
             /home/runner/work/osal/build/generic-linux_impl/CMakeFiles/osal_generic-linux_impl.dir/src/
             /home/runner/work/osal/build/CMakeFiles/osal_bsp.dir/src/bsp/shared/src/
             /home/runner/work/osal/build/CMakeFiles/osal.dir/src/os/shared/src/
+          key: bin-build-${{ github.run_number }}
 
 
       - name: Run Tests
