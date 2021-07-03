@@ -124,6 +124,7 @@ install:
 
 prep $(O)/.prep:
 	mkdir -p "$(O)"
+	echo "$(CURDIR)"
 	(cd "$(O)" && cmake $(PREP_OPTS) "$(CURDIR)")
 	echo "$(PREP_OPTS)" > "$(O)/.prep"
 

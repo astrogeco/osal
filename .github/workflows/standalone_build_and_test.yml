@@ -9,62 +9,124 @@ jobs:
   prep-env:
     name: Prepare Environment
     runs-on: ubuntu-18.04
-    
+
     steps:
+      - name: Cache Source and proto-build
+        uses: actions/cache@v2
+        with:
+          path: |
+            /home/runner/work/osal/build
+            /home/runner/work/osal/osal
+          key: proto-build
+
       - name: Checkout OSAL
+        if: steps.cache.outputs.cache-hit != 'true'
         uses: actions/checkout@v2
 
       - name: Set up for build
         run: |
           cp Makefile.sample Makefile
-          make PERMISSIVE_MODE=true prep
+          make PERMISSIVE_MODE=true prep O=/home/runner/work/osal/build
 
-      - name: Cache
-        run: |
-          pwd
-          ls
 
-  #
-  #     # Grab previous cache for cfs build
-  #     - name: Cache Source and proto-build
-  #       id: cache-source-proto-build
-  #       uses: actions/cache@v2
-  #       with:
-  #         path: ~/work/cFS/
-  #         key: ${{ runner.os }}-build-${{ env.BUILDTYPE }}-v${{ env.PREVIOUS_CACHE_VERSION }}
-  #
-  #     - name: Restore Makefile and defs
-  #       if: steps.cache-previous-build.outputs.cache-hit == 'true'
-  #       run: |
-  #         pwd
-  #         cp ~/work/Makefile Makefile
-  #         cp -r ~/work/sample_defs sample_defs
-  #
-  #
-  #
-  #
-  #
-  # Build-osal:
-  #   runs-on: ubuntu-18.04
-  #   timeout-minutes: 15
-  #   needs: "Prepare-Environment"
-  #
-  #
-  #   steps:
-  #     - name: Load Cache
-  #
-  #     - name: Build the code
-  #       run: make -j
-  #
-  #     - name: create osal-binary cache
-  #
-  # Prepare-Unit-Tests:
-  #   runs-on: ubuntu-18.04
-  #   needs: "Prepare-Environment"
-  #
-  #   steps:
-  #     - name: Prepare the test environment
-  #       run: make PERMISSIVE_MODE=true ENABLE_UNIT_TESTS=true prep
+    build-osal:
+      runs-on: ubuntu-18.04
+      needs: prep-env
+
+      steps:
+        - name: Cache Source and proto-build
+          uses: actions/cache@v2
+          with:
+            path: |
+              /home/runner/work/osal/build
+              /home/runner/work/osal/osal
+            key: proto-build
+
+        - name: Cache built binary
+          uses: actions/cache@v2
+          with:
+            path: |
+              /home/runner/work/osal/build/libosal.a
+              /home/runner/work/osal/build/libosal_bsp.a
+              /home/runner/work/osal/build/posix_impl/CMakeFiles/osal_posix_impl.dir/src/
+              /home/runner/work/osal/build/posix_impl/CMakeFiles/osal_posix_impl.dir/__/
+              /home/runner/work/osal/build/generic-linux_impl/CMakeFiles/osal_generic-linux_impl.dir/src/
+              /home/runner/work/osal/build/CMakeFiles/osal_bsp.dir/src/bsp/shared/src/
+              /home/runner/work/osal/build/CMakeFiles/osal.dir/src/os/shared/src/
+            key: bin-build
+
+        - name: Build the code
+          run: make -j O=/home/runner/work/osal/build
+
+    prep-tests:
+      runs-on: ubuntu-18.04
+      needs: prep-env
+
+      steps:
+        - name: Cache Source and proto-build
+          uses: actions/cache@v2
+          with:
+            path: |
+              /home/runner/work/osal/build
+              /home/runner/work/osal/osal
+            key: proto-build
+
+        - name: Cache Test Source
+          uses: actions/cache@v2
+          with:
+            path: |
+              /home/runner/work/osal/build/tests
+              /home/runner/work/osal/build/unit-test-coverage
+              /home/runner/work/osal/build/unit-tests
+              /home/runner/work/osal/build/unit-tests
+              /home/runner/work/osal/build/ut-stubs
+            key: test-build
+
+        - name: Prep Tests
+          run: |
+            make PERMISSIVE_MODE=true ENABLE_UNIT_TESTS=true prep O=/home/runner/work/osal/build
+
+
+    build-tests:
+      runs-on: ubuntu-18.04
+      needs: prep-tests, build-osal
+
+      steps:
+        - name: Cache Source and proto-build
+          uses: actions/cache@v2
+          with:
+            path: |
+              /home/runner/work/osal/build
+              /home/runner/work/osal/osal
+            key: proto-build
+
+        - name: Cache Test Source
+          uses: actions/cache@v2
+          with:
+            path: |
+              /home/runner/work/osal/build/tests
+              /home/runner/work/osal/build/unit-test-coverage
+              /home/runner/work/osal/build/unit-tests
+              /home/runner/work/osal/build/unit-tests
+              /home/runner/work/osal/build/ut-stubs
+            key: test-build
+
+        - name: Cache Test Source
+          uses: actions/cache@v2
+          with:
+            path: |
+              /home/runner/work/osal/build/libosal.a
+              /home/runner/work/osal/build/libosal_bsp.a
+              /home/runner/work/osal/build/posix_impl/CMakeFiles/osal_posix_impl.dir/src/
+              /home/runner/work/osal/build/posix_impl/CMakeFiles/osal_posix_impl.dir/__/
+              /home/runner/work/osal/build/generic-linux_impl/CMakeFiles/osal_generic-linux_impl.dir/src/
+              /home/runner/work/osal/build/CMakeFiles/osal_bsp.dir/src/bsp/shared/src/
+              /home/runner/work/osal/build/CMakeFiles/osal.dir/src/os/shared/src/
+            key: bin-build
+
+        - name: Run Tests
+          run: make test O=/home/runner/work/osal/build
+
   #
   # Run-Unit-Tests:
   #   runs-on: ubuntu-18.04
