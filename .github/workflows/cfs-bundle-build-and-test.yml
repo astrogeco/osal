@@ -1,0 +1,61 @@
+name: Build and Test cFS Bundle
+# Workflow builds and tests osal using the cFS-level makefile
+
+on:
+  push:
+  pull_request:
+env:
+  ENABLE_UNIT_TESTS: true
+  PERMISSIVE_MODE: true
+  OMIT_DEPRECATED: true
+  SIMULATION: native
+
+jobs:
+
+  build-and-run-tests:
+    name: Build with cFS and run osal tests
+    runs-on: ubuntu-18.04
+    timeout-minutes: 15
+
+    steps:
+
+      # Checkout bundle repository
+      - name: checkout-bundle
+        uses: actions/checkout@v2
+        with:
+          repository: nasa/cFS
+          submodules: true
+          ref: integration-candidate
+
+      - run: |
+            git config --global user.name github-actions
+            git config --global user.email github-actions@github.com
+
+      - name: Update OSAL
+        run: |
+          git pull https://github.com/${{github.repository}}.git ${{github.ref}} --rebase --strategy-option=theirs
+
+        working-directory: /home/runner/work/osal/osal/osal
+
+      - name: Check versions
+        run: |
+          git submodule
+          ls
+        working-directory: /home/runner/work/osal/osal
+
+
+      - name: Set up for build
+        run: |
+          cp ./cfe/cmake/Makefile.sample Makefile
+          cp -r ./cfe/cmake/sample_defs sample_defs
+          make prep
+
+      - run: ls /home/runner/work/osal/osal/build
+      - run: ls /home/runner/work/osal/osal/build/native
+      - run: ls /home/runner/work/osal/osal/build/native/default_cpu1
+
+      - name: Build
+        run: |
+          ls build/native/default_cpu1/osal/
+          make -j build/native/default_cpu1/osal/
+        working-directory: /home/runner/work/osal/osal
