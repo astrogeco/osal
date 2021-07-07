@@ -5,13 +5,11 @@ on:
   pull_request:
 
 env:
-  SIMULATION: native
   ENABLE_UNIT_TESTS: true
-  OMIT_DEPRECATED: true
-  BUILDTYPE: release
+  OMIT_DEPRECATED: true  
 
 jobs:
-  #Checks for duplicate actions. Skips push actions if there is a matching or duplicate pull-request action. 
+  #Checks for duplicate actions. Skips push actions if there is a matching or duplicate pull-request action.
   check-for-duplicates:
     runs-on: ubuntu-latest
     # Map a step output to a job output
@@ -61,9 +59,6 @@ jobs:
       - name: Build
         run: make -j native/default_cpu1/osal/
 
-      - name: Run tests
-        run: (cd build/native/default_cpu1/osal && make test)
-
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
 
@@ -102,9 +97,6 @@ jobs:
 
       - name: Build
         run: make -j native/default_cpu1/osal/
-
-      - name: Run tests
-        run: (cd build/native/default_cpu1/osal && make test)
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
