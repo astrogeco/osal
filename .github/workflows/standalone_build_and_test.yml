@@ -19,9 +19,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            /home/runner/work/osal/Makefile
-            /home/runner/work/osal/build/*
-            /home/runner/work/osal/osal/*
+            /home/runner/work/osal/*
           key: proto-build-${{ github.run_number }}
 
       - name: Checkout OSAL
@@ -34,7 +32,7 @@ jobs:
 
       - name: Prep Build
         run: |
-          make PERMISSIVE_MODE=true prep O=/home/runner/work/osal/build
+          make prep O=/home/runner/work/osal/build
         working-directory: /home/runner/work/osal
 
   build-osal:
@@ -47,9 +45,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            /home/runner/work/osal/Makefile
-            /home/runner/work/osal/build/*
-            /home/runner/work/osal/osal/*
+            /home/runner/work/osal/*
           key: proto-build-${{ github.run_number }}
 
       - name: Cache built binary
@@ -86,9 +82,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            /home/runner/work/osal/Makefile
-            /home/runner/work/osal/build/*
-            /home/runner/work/osal/osal/*
+            /home/runner/work/osal/*
           key: proto-build-${{ github.run_number }}
 
       - name: Prep Tests
