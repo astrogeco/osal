@@ -4,6 +4,9 @@ on:
   push:
   pull_request:
 
+env:
+  PERMISSIVE_MODE: true
+
 jobs:
 
   prep-env:
@@ -70,6 +73,8 @@ jobs:
   build-tests:
     runs-on: ubuntu-18.04
     needs: [prep-env, build-osal]
+    env:
+      ENABLE_UNIT_TESTS: true
 
     steps:
 
@@ -88,7 +93,7 @@ jobs:
 
       - name: Prep Tests
         run: |
-          make PERMISSIVE_MODE=true ENABLE_UNIT_TESTS=true prep
+          make prep
         working-directory: /home/runner/work/osal
 
       - name: Cache built binary
@@ -109,7 +114,7 @@ jobs:
         working-directory: /home/runner/work/osal/build
 
       - name: Build Tests Binary
-        run: make
+        run: make -j
         working-directory: /home/runner/work/osal
 
       - name: Run Tests
