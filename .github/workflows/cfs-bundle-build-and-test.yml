@@ -37,7 +37,7 @@ jobs:
       - name: Update OSAL
 
         run: |
-          git checkout fork ${{env.GITHUB_PR_BRANCH}}
+          git checkout fork/${{env.GITHUB_PR_BRANCH}}
         working-directory: osal
 
       - name: Check versions
