@@ -25,17 +25,17 @@ jobs:
           repository: nasa/cFS
           submodules: true
           ref: integration-candidate
+
       - name: Setup Git Environment
         run: |
-            git config user.name github-actions
-            git config user.email github-actions@github.com
-            git remote add fork https://github.com/${{github.repository}}.git
-            git fetch fork
-            echo "GITHUB_PR_BRANCH=$(echo ${GITHUB_REF##*/})" >> $GITHUB_ENV
-        working-directory: osal
+          echo "GITHUB_PR_BRANCH=$(echo ${GITHUB_REF##*/})" >> $GITHUB_ENV
+          cd osal
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git remote add fork https://github.com/${{github.repository}}.git
+          git fetch fork
 
       - name: Update OSAL
-
         run: |
           git checkout fork/${{env.GITHUB_PR_BRANCH}}
         working-directory: osal
@@ -44,45 +44,83 @@ jobs:
         run: git submodule
         working-directory: /home/runner/work/osal/osal
 
-      - name: Set up for osal build
-        run: |
-          cp Makefile.sample Makefile
-          make prep
-        working-directory: osal
-
-      - name: Cache OSAL
-        id: cache-osal
-        uses: actions/cache@v2
-        with:
-          path: /home/`runner/work/osal/osal/*
-          key: osal-${{ github.run_number }}
-
-      - name: cleanup osal build
-        run: |
-          make distclean
-          rm Makefile
-        working-directory: osal
-
       - name: Set up for cFS bundle build
         run: |
           cp ./cfe/cmake/Makefile.sample Makefile
           cp -r ./cfe/cmake/sample_defs sample_defs
           make prep
 
-      - name: Cache Bundle
+      - name: Cache cFS Build Environment
         id: cache-bundle
         uses: actions/cache@v2
         with:
-          path: /home/runner/work/osal/osal/*
+          path: |
+            /home/runner/work/osal/osal/Makefile
+            /home/runner/work/osal/osal/sample_defs/*
+            /home/runner/work/osal/osal/build/*
           key: bundle-${{ github.run_number }}
 
-  # build-bundle-run-tests:
-  #   name: Build with cFS Bundle and run tests
-  #   runs-on: ubuntu-18.04
-  #   timeout-minutes: 15
-  #
-  #   steps:
-  #     - name: Build
-  #       run: |
-  #         make -j build/native/default_cpu1/osal/
-  #       working-directory: /home/runner/work/osal/osal
+      - name: Set up for osal build
+        run: |
+          cp Makefile.sample Makefile
+          make prep
+        working-directory: /home/runner/work/osal/osal/osal
+
+      - name: Cache OSAL Build Environment
+        id: cache-osal
+        uses: actions/cache@v2
+        with:
+          path: |
+            /home/runner/work/osal/osal/osal/Makefile
+            /home/runner/work/osal/osal/osal/build/*
+          key: osal-${{ github.run_number }}
+
+  build-bundle-run-tests:
+    name: Build with cFS Bundle and run tests
+    runs-on: ubuntu-18.04
+    needs: prepare-environment
+    timeout-minutes: 15
+
+    steps:
+
+      - name: Cache cFS Build Environment
+        id: cache-bundle
+        uses: actions/cache@v2
+        with:
+          path: |
+            /home/runner/work/osal/osal/Makefile
+            /home/runner/work/osal/osal/sample_defs/*
+            /home/runner/work/osal/osal/build/*
+          key: bundle-${{ github.run_number }}
+
+
+      - name: Build cFS-context OSAL Tests
+        run: |
+          make -j build/native/default_cpu1/osal/
+        working-directory: /home/runner/work/osal/osal
+
+  build-local-run-tests:
+    name: Build with OSAL and run tests
+    runs-on: ubuntu-18.04
+    needs: prepare-environment
+    timeout-minutes: 15
+
+    steps:
+
+      - name: Cache OSAL Build Environment
+        id: cache-osal
+        uses: actions/cache@v2
+        with:
+          path: |
+            /home/runner/work/osal/osal/osal/Makefile
+            /home/runner/work/osal/osal/osal/build/*
+          key: osal-${{ github.run_number }}
+
+      - name: Build the code
+        run: make -j
+        working-directory: /home/runner/work/osal/osal/osal
+
+      # Baseline lcov and run all tests
+      - name: Test
+        run: make test
+        working-directory: /home/runner/work/osal/osal/osal
