@@ -11,7 +11,7 @@ env:
 
 jobs:
 
-  prepare-build-environment:
+  prepare-environment:
     name: Prepare Build environment
     runs-on: ubuntu-18.04
 
