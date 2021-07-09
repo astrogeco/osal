@@ -15,7 +15,6 @@ jobs:
   prepare-environment:
     name: Prepare Build environment
     runs-on: ubuntu-18.04
-    timeout-minutes: 15
 
     steps:
 
@@ -31,10 +30,13 @@ jobs:
             git config user.name github-actions
             git config user.email github-actions@github.com
             git remote add fork https://github.com/${{github.repository}}.git
+            echo "GITHUB_PR_BRANCH=$(echo ${GITHUB_REF##*/}" >> $GITHUB_ENV
         working-directory: osal
+# echo "GITHUB_PR_BRANCH=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
 
       - name: Update OSAL
-        run: git reset fork ${{github.ref}} --hard
+        # git pull https://github.com/${{github.repository}}.git ${{github.ref}} --rebase --strategy-option=theirs
+        run: git reset fork/${{github.ref}} --hard
 
         working-directory: /home/runner/work/osal/osal/osal
 
@@ -42,6 +44,12 @@ jobs:
         run: git submodule
         working-directory: /home/runner/work/osal/osal
 
+      - name: Cache OSAL
+        id: cache-osal
+        uses: actions/cache@v2
+        with:
+          path: /home/`runner/work/osal/osal/*
+        key: osal-${{ github.run_number }}
 
       - name: Set up for build
         run: |
@@ -49,9 +57,20 @@ jobs:
           cp -r ./cfe/cmake/sample_defs sample_defs
           make prep
 
+      - name: Cache Bundle
+        id: cache-bundle
+        uses: actions/cache@v2
+        with:
+          path: /home/runner/work/osal/osal/*
+        key: bundle-${{ github.run_number }}
 
-      - name: Build
-        run: |
-          ls build/native/default_cpu1/osal/
-          make -j build/native/default_cpu1/osal/
-        working-directory: /home/runner/work/osal/osal
+  # build-bundle-run-tests:
+  #   name: Build with cFS Bundle and run tests
+  #   runs-on: ubuntu-18.04
+  #   timeout-minutes: 15
+  #
+  #   steps:
+  #     - name: Build
+  #       run: |
+  #         make -j build/native/default_cpu1/osal/
+  #       working-directory: /home/runner/work/osal/osal
