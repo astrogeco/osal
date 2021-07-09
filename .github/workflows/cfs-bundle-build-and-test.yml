@@ -95,7 +95,7 @@ jobs:
           make prep
           make -j build/native/default_cpu1/osal/
         env:
-          - ENABLE_UNIT_TESTS: true
+          ENABLE_UNIT_TESTS: true
 
       - name: Run tests
         run: make test
@@ -127,9 +127,11 @@ jobs:
 
       - name: Build with Tests
         run: |
-          make ENABLE_UNIT_TESTS=true prep
+          make prep
           make -j
         working-directory: /home/runner/work/osal/osal/osal
+        env:
+          ENABLE_UNIT_TESTS: true
 
 
       # Baseline lcov and run all tests
