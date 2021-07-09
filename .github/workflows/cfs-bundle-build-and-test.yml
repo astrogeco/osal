@@ -5,14 +5,13 @@ on:
   push:
   pull_request:
 env:
-  ENABLE_UNIT_TESTS: true
   PERMISSIVE_MODE: true
   OMIT_DEPRECATED: true
   SIMULATION: native
 
 jobs:
 
-  prepare-environment:
+  prepare-build-environment:
     name: Prepare Build environment
     runs-on: ubuntu-18.04
 
@@ -91,6 +90,11 @@ jobs:
         run: |
           make -j build/native/default_cpu1/osal/
 
+      - name: Build with Tests
+        run: |
+          make prep ENABLE_UNIT_TESTS=true
+          make -j build/native/default_cpu1/osal/
+
       - name: Run tests
         run: make test
         working-directory: build/native/default_cpu1/osal
@@ -117,6 +121,14 @@ jobs:
       - name: Build
         run: make -j
         working-directory: /home/runner/work/osal/osal/osal
+
+
+      - name: Build with Tests
+        run: |
+          make prep ENABLE_UNIT_TESTS=true
+          make -j
+        working-directory: /home/runner/work/osal/osal/osal
+
 
       # Baseline lcov and run all tests
       - name: Test
