@@ -87,11 +87,13 @@ jobs:
           path: /home/runner/work/osal/osal/*
           key: bundle-${{ github.run_number }}
 
-
-      - name: Build cFS-context OSAL Tests
+      - name: Build cFS-context OSAL
         run: |
           make -j build/native/default_cpu1/osal/
-        working-directory: /home/runner/work/osal/osal
+
+      - name: Run tests
+        run: make test
+        working-directory: build/native/default_cpu1/osal
 
   build-local-run-tests:
     name: Build with OSAL and run tests
