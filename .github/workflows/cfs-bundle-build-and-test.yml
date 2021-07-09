@@ -12,8 +12,8 @@ env:
 
 jobs:
 
-  build-and-run-tests:
-    name: Build with cFS and run osal tests
+  prepare-environment:
+    name: Prepare Build environment
     runs-on: ubuntu-18.04
     timeout-minutes: 15
 
@@ -26,21 +26,20 @@ jobs:
           repository: nasa/cFS
           submodules: true
           ref: integration-candidate
-
-      - run: |
-            git config --global user.name github-actions
-            git config --global user.email github-actions@github.com
+      - name: Setup Git Environment
+        run: |
+            git config user.name github-actions
+            git config user.email github-actions@github.com
+            git remote add fork https://github.com/${{github.repository}}.git
+        working-directory: osal
 
       - name: Update OSAL
-        run: |
-          git pull https://github.com/${{github.repository}}.git ${{github.ref}} --rebase --strategy-option=theirs
+        run: git reset fork ${{github.ref}} --hard
 
         working-directory: /home/runner/work/osal/osal/osal
 
       - name: Check versions
-        run: |
-          git submodule
-          ls
+        run: git submodule
         working-directory: /home/runner/work/osal/osal
 
 
@@ -50,9 +49,6 @@ jobs:
           cp -r ./cfe/cmake/sample_defs sample_defs
           make prep
 
-      - run: ls /home/runner/work/osal/osal/build
-      - run: ls /home/runner/work/osal/osal/build/native
-      - run: ls /home/runner/work/osal/osal/build/native/default_cpu1
 
       - name: Build
         run: |
