@@ -44,7 +44,7 @@ jobs:
         run: git submodule
         working-directory: /home/runner/work/osal/osal
 
-      - name: Set up for cFS bundle build
+      - name: Prep for cFS bundle build
         run: |
           cp ./cfe/cmake/Makefile.sample Makefile
           cp -r ./cfe/cmake/sample_defs sample_defs
@@ -58,7 +58,7 @@ jobs:
             /home/runner/work/osal/osal/*
           key: bundle-${{ github.run_number }}
 
-      - name: Set up for osal build
+      - name: Prep for Standalone OSAL build
         run: |
           cp Makefile.sample Makefile
           make prep
@@ -73,7 +73,7 @@ jobs:
           key: osal-${{ github.run_number }}
 
   build-bundle-run-tests:
-    name: Build with cFS Bundle and run tests
+    name: Build with cFS Bundle and Test
     runs-on: ubuntu-18.04
     needs: prepare-environment
     timeout-minutes: 15
@@ -96,14 +96,14 @@ jobs:
         working-directory: build/native/default_cpu1/osal
 
   build-local-run-tests:
-    name: Build with OSAL and run tests
+    name: Build Standalone OSAL and Run tests
     runs-on: ubuntu-18.04
     needs: prepare-environment
     timeout-minutes: 15
 
     steps:
 
-      - name: Install coverage tools
+      - name: Install Tools
         run: sudo apt-get install lcov -y
 
       - name: Cache OSAL Build Environment
@@ -114,11 +114,25 @@ jobs:
             /home/runner/work/osal/osal/osal/*
           key: osal-${{ github.run_number }}
 
-      - name: Build the code
+      - name: Build
         run: make -j
         working-directory: /home/runner/work/osal/osal/osal
 
       # Baseline lcov and run all tests
       - name: Test
         run: make test
+        working-directory: /home/runner/work/osal/osal/osal
+
+
+      - name: Calculate Coverage
+        run: make lcov | tee lcov_out.txt
+        working-directory: /home/runner/work/osal/osal/osal
+
+      - name: Confirm 100% Line Coverage
+        run: |
+          if [[ `grep -A 3 "Overall coverage rate" lcov_out.txt | grep lines` != *"100.0%"* ]]; then
+            grep -A 3 "Overall coverage rate" lcov_out.txt
+            echo "Lacks 100.0% line unit test coverage"
+            exit -1
+          fi
         working-directory: /home/runner/work/osal/osal/osal
