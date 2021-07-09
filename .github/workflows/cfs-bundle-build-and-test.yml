@@ -36,7 +36,7 @@ jobs:
 
       - name: Update OSAL
         # git pull https://github.com/${{github.repository}}.git ${{github.ref}} --rebase --strategy-option=theirs
-        run: git reset fork/${{github.ref}} --hard
+        run: git reset fork/${{env.GITHUB_PR_BRANCH}} --hard
 
         working-directory: /home/runner/work/osal/osal/osal
 
@@ -44,12 +44,12 @@ jobs:
         run: git submodule
         working-directory: /home/runner/work/osal/osal
 
-      - name: Cache OSAL
-        id: cache-osal
-        uses: actions/cache@v2
-        with:
-          path: /home/`runner/work/osal/osal/*
-        key: osal-${{ github.run_number }}
+      # - name: Cache OSAL
+      #   id: cache-osal
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: /home/`runner/work/osal/osal/*
+      #     key: osal-${{ github.run_number }}
 
       - name: Set up for build
         run: |
@@ -57,12 +57,12 @@ jobs:
           cp -r ./cfe/cmake/sample_defs sample_defs
           make prep
 
-      - name: Cache Bundle
-        id: cache-bundle
-        uses: actions/cache@v2
-        with:
-          path: /home/runner/work/osal/osal/*
-        key: bundle-${{ github.run_number }}
+      # - name: Cache Bundle
+      #   id: cache-bundle
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: /home/runner/work/osal/osal/*
+      #   key: bundle-${{ github.run_number }}
 
   # build-bundle-run-tests:
   #   name: Build with cFS Bundle and run tests
