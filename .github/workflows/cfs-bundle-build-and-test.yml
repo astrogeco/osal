@@ -55,9 +55,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            /home/runner/work/osal/osal/Makefile
-            /home/runner/work/osal/osal/sample_defs/*
-            /home/runner/work/osal/osal/build/*
+            /home/runner/work/osal/osal/*
           key: bundle-${{ github.run_number }}
 
       - name: Set up for osal build
@@ -71,8 +69,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            /home/runner/work/osal/osal/osal/Makefile
-            /home/runner/work/osal/osal/osal/build/*
+            /home/runner/work/osal/osal/osal/*
           key: osal-${{ github.run_number }}
 
   build-bundle-run-tests:
@@ -87,16 +84,13 @@ jobs:
         id: cache-bundle
         uses: actions/cache@v2
         with:
-          path: |
-            /home/runner/work/osal/osal/Makefile
-            /home/runner/work/osal/osal/sample_defs/*
-            /home/runner/work/osal/osal/build/*
+          path: /home/runner/work/osal/osal/*
           key: bundle-${{ github.run_number }}
 
 
       - name: Build cFS-context OSAL Tests
         run: |
-          make install -j build/native/default_cpu1/osal/
+          make -j build/native/default_cpu1/osal/
         working-directory: /home/runner/work/osal/osal
 
   build-local-run-tests:
@@ -112,12 +106,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            /home/runner/work/osal/osal/osal/Makefile
-            /home/runner/work/osal/osal/osal/build/*
+            /home/runner/work/osal/osal/osal/*
           key: osal-${{ github.run_number }}
 
       - name: Build the code
-        run: make install -j
+        run: make -j
         working-directory: /home/runner/work/osal/osal/osal
 
       # Baseline lcov and run all tests
