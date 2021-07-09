@@ -33,14 +33,11 @@ jobs:
             git fetch fork
             echo "GITHUB_PR_BRANCH=$(echo ${GITHUB_REF##*/})" >> $GITHUB_ENV
         working-directory: osal
-# echo "GITHUB_PR_BRANCH=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
 
       - name: Update OSAL
 
-        # git pull https://github.com/${{github.repository}}.git ${{github.ref}} --rebase --strategy-option=theirs
         run: |
-          git remote -v
-          git reset fork/${{env.GITHUB_PR_BRANCH}} --hard
+          git checkout fork ${{env.GITHUB_PR_BRANCH}}
         working-directory: osal
 
       - name: Check versions
