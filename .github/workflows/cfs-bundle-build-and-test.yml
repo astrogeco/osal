@@ -44,25 +44,37 @@ jobs:
         run: git submodule
         working-directory: /home/runner/work/osal/osal
 
-      # - name: Cache OSAL
-      #   id: cache-osal
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: /home/`runner/work/osal/osal/*
-      #     key: osal-${{ github.run_number }}
+      - name: Set up for osal build
+        run: |
+          cp Makefile.sample Makefile
+          make prep
+        working-directory: osal
 
-      - name: Set up for build
+      - name: Cache OSAL
+        id: cache-osal
+        uses: actions/cache@v2
+        with:
+          path: /home/`runner/work/osal/osal/*
+          key: osal-${{ github.run_number }}
+
+      - name: cleanup osal build
+        run: |
+          make distclean
+          rm Makefile
+        working-directory: osal
+
+      - name: Set up for cFS bundle build
         run: |
           cp ./cfe/cmake/Makefile.sample Makefile
           cp -r ./cfe/cmake/sample_defs sample_defs
           make prep
 
-      # - name: Cache Bundle
-      #   id: cache-bundle
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: /home/runner/work/osal/osal/*
-      #   key: bundle-${{ github.run_number }}
+      - name: Cache Bundle
+        id: cache-bundle
+        uses: actions/cache@v2
+        with:
+          path: /home/runner/work/osal/osal/*
+          key: bundle-${{ github.run_number }}
 
   # build-bundle-run-tests:
   #   name: Build with cFS Bundle and run tests
