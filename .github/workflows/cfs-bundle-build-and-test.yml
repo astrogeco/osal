@@ -94,7 +94,8 @@ jobs:
         run: |
           make prep
           make -j build/native/default_cpu1/osal/
-        env: ENABLE_UNIT_TESTS=true
+        env:
+          - ENABLE_UNIT_TESTS: true
 
       - name: Run tests
         run: make test
