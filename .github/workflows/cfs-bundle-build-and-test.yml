@@ -92,8 +92,9 @@ jobs:
 
       - name: Build with Tests
         run: |
-          make ENABLE_UNIT_TESTS=true prep
+          make prep
           make -j build/native/default_cpu1/osal/
+        env: ENABLE_UNIT_TESTS=true
 
       - name: Run tests
         run: make test
@@ -119,7 +120,7 @@ jobs:
           key: osal-${{ github.run_number }}
 
       - name: Build
-        run: make -j
+        run: make ENABLE_UNIT_TESTS=false -j
         working-directory: /home/runner/work/osal/osal/osal
 
 
