@@ -30,15 +30,18 @@ jobs:
             git config user.name github-actions
             git config user.email github-actions@github.com
             git remote add fork https://github.com/${{github.repository}}.git
+            git fetch fork
             echo "GITHUB_PR_BRANCH=$(echo ${GITHUB_REF##*/})" >> $GITHUB_ENV
         working-directory: osal
 # echo "GITHUB_PR_BRANCH=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
 
       - name: Update OSAL
-        # git pull https://github.com/${{github.repository}}.git ${{github.ref}} --rebase --strategy-option=theirs
-        run: git reset fork/${{env.GITHUB_PR_BRANCH}} --hard
 
-        working-directory: /home/runner/work/osal/osal/osal
+        # git pull https://github.com/${{github.repository}}.git ${{github.ref}} --rebase --strategy-option=theirs
+        run: |
+          git remote -v
+          git reset fork/${{env.GITHUB_PR_BRANCH}} --hard
+        working-directory: osal
 
       - name: Check versions
         run: git submodule
