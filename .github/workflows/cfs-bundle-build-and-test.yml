@@ -92,7 +92,7 @@ jobs:
 
       - name: Build with Tests
         run: |
-          make prep ENABLE_UNIT_TESTS=true
+          make ENABLE_UNIT_TESTS=true prep
           make -j build/native/default_cpu1/osal/
 
       - name: Run tests
@@ -125,7 +125,7 @@ jobs:
 
       - name: Build with Tests
         run: |
-          make prep ENABLE_UNIT_TESTS=true
+          make ENABLE_UNIT_TESTS=true prep
           make -j
         working-directory: /home/runner/work/osal/osal/osal
 
